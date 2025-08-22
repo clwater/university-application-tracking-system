@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { UserRole } from '@/lib/database.types'
@@ -11,8 +11,9 @@ interface ProfileSetupProps {
 }
 
 export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
-  const { user } = useAuth()
+  const { user, refreshUserRole } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [checkingExisting, setCheckingExisting] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
     graduationYear: '',
@@ -24,14 +25,63 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
     studentIds: [] as string[], // 仅用于家长
   })
 
+  // 检查用户是否已经有档案
+  useEffect(() => {
+    const checkExistingProfile = async () => {
+      if (!user) return
+
+      console.log('ProfileSetup: Checking existing profile for user:', user.id)
+      
+      try {
+        // 检查学生档案
+        const { data: studentData, error: studentError } = await supabase
+          .from('students')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+
+        if (studentData) {
+          console.log('ProfileSetup: Found existing student profile:', studentData)
+          await refreshUserRole()
+          onComplete()
+          return
+        }
+
+        // 检查家长档案
+        const { data: parentData, error: parentError } = await supabase
+          .from('parents')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+
+        if (parentData) {
+          console.log('ProfileSetup: Found existing parent profile:', parentData)
+          await refreshUserRole()
+          onComplete()
+          return
+        }
+
+        console.log('ProfileSetup: No existing profile found')
+      } catch (error) {
+        console.error('ProfileSetup: Error checking existing profile:', error)
+      } finally {
+        setCheckingExisting(false)
+      }
+    }
+
+    checkExistingProfile()
+  }, [user, refreshUserRole, onComplete])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
 
     setLoading(true)
     try {
+      console.log('ProfileSetup: Creating profile for role:', role, 'user:', user.id)
+      
       if (role === 'student') {
-        await supabase.from('students').insert({
+        const { data, error } = await supabase.from('students').insert({
           user_id: user.id,
           name: formData.name,
           email: user.email!,
@@ -42,15 +92,33 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
           target_countries: formData.targetCountries.length > 0 ? formData.targetCountries : null,
           intended_majors: formData.intendedMajors.length > 0 ? formData.intendedMajors : null,
         })
+        
+        if (error) {
+          console.error('Error creating student profile:', error)
+          throw error
+        }
+        console.log('Student profile created successfully:', data)
       } else if (role === 'parent') {
-        await supabase.from('parents').insert({
+        const { data, error } = await supabase.from('parents').insert({
           user_id: user.id,
           name: formData.name,
           email: user.email!,
           student_ids: formData.studentIds.length > 0 ? formData.studentIds : null,
         })
+        
+        if (error) {
+          console.error('Error creating parent profile:', error)
+          throw error
+        }
+        console.log('Parent profile created successfully:', data)
       }
 
+      console.log('ProfileSetup: Refreshing user role...')
+      // 刷新用户角色
+      await refreshUserRole()
+      
+      console.log('ProfileSetup: Calling onComplete...')
+      // 调用完成回调
       onComplete()
     } catch (error) {
       console.error('Error creating profile:', error)
@@ -58,6 +126,17 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (checkingExisting) {
+    return (
+      <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">检查现有档案...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

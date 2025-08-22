@@ -13,6 +13,7 @@ interface AuthContextType {
   loading: boolean
   signOut: () => Promise<void>
   getUserProfile: () => Promise<any>
+  refreshUserRole: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -26,11 +27,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // 获取初始会话
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        fetchUserRole(session.user.id)
+        await fetchUserRole(session.user.id)
       }
       setLoading(false)
     })
@@ -38,11 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 监听认证状态变化
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        fetchUserRole(session.user.id)
+        await fetchUserRole(session.user.id)
       } else {
         setUserRole(null)
       }
@@ -54,31 +55,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserRole = async (userId: string) => {
     try {
+      console.log('AuthContext: Fetching user role for userId:', userId)
+      
       // 首先检查是否是学生
-      const { data: student } = await supabase
+      const { data: student, error: studentError } = await supabase
         .from('students')
         .select('*')
         .eq('user_id', userId)
         .single()
 
+      console.log('AuthContext: Student query result:', { student, studentError })
+
       if (student) {
+        console.log('AuthContext: Setting role to student')
         setUserRole('student')
         return
       }
 
       // 然后检查是否是家长
-      const { data: parent } = await supabase
+      const { data: parent, error: parentError } = await supabase
         .from('parents')
         .select('*')
         .eq('user_id', userId)
         .single()
 
+      console.log('AuthContext: Parent query result:', { parent, parentError })
+
       if (parent) {
+        console.log('AuthContext: Setting role to parent')
         setUserRole('parent')
         return
       }
 
       // 如果没有找到角色记录，设置为null，需要用户完善档案
+      console.log('AuthContext: No role found, setting to null')
       setUserRole(null)
     } catch (error) {
       console.error('Error fetching user role:', error)
@@ -121,6 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null
   }
 
+  const refreshUserRole = async () => {
+    if (user) {
+      await fetchUserRole(user.id)
+    }
+  }
+
   const value = {
     user,
     session,
@@ -128,6 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signOut,
     getUserProfile,
+    refreshUserRole,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

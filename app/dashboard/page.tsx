@@ -1,20 +1,39 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import StudentDashboard from '@/components/dashboard/StudentDashboard'
 import ParentDashboard from '@/components/dashboard/ParentDashboard'
+import ProfileSetup from '@/components/auth/ProfileSetup'
+import { UserRole } from '@/lib/database.types'
 
 export default function DashboardPage() {
   const { user, userRole, loading } = useAuth()
   const router = useRouter()
+  const [selectedRole, setSelectedRole] = useState<UserRole>('student')
+  const [needsProfileSetup, setNeedsProfileSetup] = useState(false)
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/login')
+    if (!loading) {
+      console.log('Dashboard: State check - user:', user?.id, 'userRole:', userRole)
+      if (!user) {
+        console.log('Dashboard: No user, redirecting to login')
+        router.push('/auth/login')
+      } else if (!userRole) {
+        console.log('Dashboard: User exists but no role, showing ProfileSetup')
+        // 用户已登录但没有角色，需要完善档案
+        const roleFromMetadata = user.user_metadata?.role as UserRole
+        console.log('Dashboard: Role from metadata:', roleFromMetadata)
+        if (roleFromMetadata) {
+          setSelectedRole(roleFromMetadata)
+        }
+        setNeedsProfileSetup(true)
+      } else {
+        console.log('Dashboard: User has role:', userRole, 'showing dashboard')
+      }
     }
-  }, [user, loading, router])
+  }, [user, userRole, loading, router])
 
   if (loading) {
     return (
@@ -31,6 +50,21 @@ export default function DashboardPage() {
     return null
   }
 
+  // 如果需要完善档案，显示ProfileSetup
+  if (needsProfileSetup) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <ProfileSetup
+          role={selectedRole}
+          onComplete={() => {
+            setNeedsProfileSetup(false)
+            window.location.reload() // 重新加载以更新角色
+          }}
+        />
+      </div>
+    )
+  }
+
   if (userRole === 'student') {
     return <StudentDashboard />
   }
@@ -42,8 +76,8 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">角色未识别</h2>
-        <p className="text-gray-600">请重新登录或联系管理员</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">正在加载用户信息...</h2>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
       </div>
     </div>
   )

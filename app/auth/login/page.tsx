@@ -1,27 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import LoginForm from '@/components/auth/LoginForm'
-import ProfileSetup from '@/components/auth/ProfileSetup'
-import { UserRole } from '@/lib/database.types'
 
 export default function LoginPage() {
-  const { user, userRole, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
-  const [needsProfileSetup, setNeedsProfileSetup] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<UserRole>('student')
 
   useEffect(() => {
     if (!loading && user) {
-      if (userRole) {
-        router.push('/dashboard')
-      } else {
-        setNeedsProfileSetup(true)
-      }
+      // 如果用户已登录，总是跳转到dashboard，让dashboard处理ProfileSetup
+      router.push('/dashboard')
     }
-  }, [user, userRole, loading, router])
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -34,24 +27,13 @@ export default function LoginPage() {
     )
   }
 
-  if (user && needsProfileSetup) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <ProfileSetup
-          role={selectedRole}
-          onComplete={() => router.push('/dashboard')}
-        />
-      </div>
-    )
-  }
-
-  // 如果用户已登录且有角色，不显示登录表单（重定向在useEffect中处理）
-  if (user && userRole) {
+  // 如果用户已登录，显示跳转中的状态
+  if (user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">正在跳转...</p>
+          <p className="mt-4 text-gray-600">正在跳转到仪表板...</p>
         </div>
       </div>
     )
@@ -59,7 +41,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <LoginForm onRoleSelect={setSelectedRole} />
+      <LoginForm />
     </div>
   )
 }

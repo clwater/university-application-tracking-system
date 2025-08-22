@@ -31,14 +31,20 @@ export default function AuthCallback() {
           if (response.ok) {
             const result = await response.json()
             console.log('Profile setup result:', result)
+            // 等待一段时间让AuthContext更新状态
+            setTimeout(() => {
+              router.push('/dashboard')
+            }, 1000)
           } else {
             console.log('Profile already exists or error occurred')
+            // 档案已存在，直接跳转
+            router.push('/dashboard')
           }
         } catch (error) {
           console.error('Error setting up profile:', error)
+          // 出错时也跳转到dashboard，让用户手动完成设置
+          router.push('/dashboard')
         }
-
-        router.push('/dashboard')
       } else {
         router.push('/auth/login')
       }
