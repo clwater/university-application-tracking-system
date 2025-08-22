@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withParentAuth } from '@/lib/api-auth'
 import { createClient } from '@supabase/supabase-js'
+import { getSupabaseUrl, getSupabaseServiceKey } from '@/lib/env'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = getSupabaseUrl()
+const supabaseServiceKey = getSupabaseServiceKey()
 
 // GET /api/parent/students/[id]/applications - 获取指定学生的申请列表
 export const GET = withParentAuth(async (request: NextRequest, user, { params }: { params: { id: string } }) => {

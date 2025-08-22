@@ -14,11 +14,11 @@ interface StatusManagerProps {
 export default function StatusManager({ application, onStatusUpdate }: StatusManagerProps) {
   const [loading, setLoading] = useState(false)
   const [showStatusModal, setShowStatusModal] = useState(false)
-  const [newStatus, setNewStatus] = useState<ApplicationStatus>(application.status)
+  const [newStatus, setNewStatus] = useState<ApplicationStatus>(application.status as ApplicationStatus)
   const [statusDetails, setStatusDetails] = useState({
     submittedDate: application.submitted_date || '',
     decisionDate: application.decision_date || '',
-    decisionType: application.decision_type || '',
+    decisionType: (application.decision_type as string) || '',
     notes: application.notes || '',
   })
 
@@ -135,7 +135,7 @@ export default function StatusManager({ application, onStatusUpdate }: StatusMan
   }
 
   const getNextSuggestedStatus = () => {
-    switch (application.status) {
+    switch (application.status as ApplicationStatus) {
       case 'not_started':
         return 'in_progress'
       case 'in_progress':
@@ -155,9 +155,9 @@ export default function StatusManager({ application, onStatusUpdate }: StatusMan
     <>
       {/* 当前状态显示 */}
       <div className="flex items-center gap-3">
-        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(application.status)}`}>
-          {getStatusIcon(application.status)}
-          {statusOptions.find(option => option.value === application.status)?.label}
+        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(application.status as ApplicationStatus)}`}>
+          {getStatusIcon(application.status as ApplicationStatus)}
+          {statusOptions.find(option => option.value === application.status as ApplicationStatus)?.label}
         </div>
 
         {/* 快速更新按钮 */}

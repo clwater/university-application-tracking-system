@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withStudentAuth } from '@/lib/api-auth'
 import { createClient } from '@supabase/supabase-js'
+import { getSupabaseUrl, getSupabaseServiceKey } from '@/lib/env'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = getSupabaseUrl()
+const supabaseServiceKey = getSupabaseServiceKey()
 
 // PUT /api/student/requirements/[id] - 更新申请要求
 export const PUT = withStudentAuth(async (request: NextRequest, user, { params }: { params: { id: string } }) => {

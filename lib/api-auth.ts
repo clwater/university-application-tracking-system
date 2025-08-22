@@ -1,10 +1,12 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { UserRole } from './database.types'
-import { hasPermission, PermissionError, UnauthorizedError } from './permissions'
+import { hasPermission, PermissionError, UnauthorizedError, Permission } from './permissions'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+import { getSupabaseUrl, getSupabaseServiceKey } from './env'
+
+const supabaseUrl = getSupabaseUrl()
+const supabaseServiceKey = getSupabaseServiceKey()
 
 export interface AuthenticatedUser {
   id: string

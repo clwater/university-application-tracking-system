@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X, Plus, Star, MapPin, Users, DollarSign, Calendar, ArrowRight } from 'lucide-react'
 import { University } from '@/lib/database.types'
 import UniversitySearch from './UniversitySearch'

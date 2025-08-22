@@ -69,11 +69,11 @@ export interface ResourceOwnership {
   userId?: string
 }
 
-export function canAccessResource(
+export async function canAccessResource(
   userRole: UserRole | null,
   userId: string | null,
   resource: ResourceOwnership
-): boolean {
+): Promise<boolean> {
   if (!userRole || !userId) return false
 
   switch (userRole) {
@@ -83,9 +83,13 @@ export function canAccessResource(
     
     case 'parent':
       // 家长可以访问自己的资源和关联学生的资源
-      return resource.userId === userId || 
-             (resource.parentId === userId) ||
-             (resource.studentId && isParentOfStudent(userId, resource.studentId))
+      if (resource.userId === userId || resource.parentId === userId) {
+        return true
+      }
+      if (resource.studentId) {
+        return await isParentOfStudent(userId, resource.studentId)
+      }
+      return false
     
     case 'admin':
       // 管理员可以访问所有资源

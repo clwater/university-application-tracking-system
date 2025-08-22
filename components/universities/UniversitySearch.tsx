@@ -50,7 +50,7 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
       const { data, error } = await supabase
         .from('universities')
         .select('*')
-        .order('us_news_ranking', { ascending: true, nullsLast: true })
+        .order('us_news_ranking', { ascending: true, nullsFirst: false })
 
       if (error) throw error
       setUniversities(data || [])

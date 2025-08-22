@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start"
+    "build": "next build",
+    "start": "next start",
+    "check-build": "node check-build.js",
+    "type-check": "tsc --noEmit",
+    "lint-check": "next lint"
   },
   "dependencies": {
     "@supabase/auth-ui-react": "^0.4.7",

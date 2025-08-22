@@ -130,7 +130,7 @@ export default function RequirementTracker({ applicationId }: RequirementTracker
     setEditingRequirement(requirement)
     setFormData({
       requirementType: requirement.requirement_type,
-      status: requirement.status,
+      status: requirement.status as RequirementStatus,
       deadline: requirement.deadline || '',
       notes: requirement.notes || ''
     })
@@ -279,12 +279,12 @@ export default function RequirementTracker({ applicationId }: RequirementTracker
                     <h4 className="font-medium text-gray-900">
                       {requirementLabels[requirement.requirement_type] || requirement.requirement_type}
                     </h4>
-                    <div className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full ${getStatusColor(requirement.status)}`}>
-                      {getStatusIcon(requirement.status)}
+                    <div className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full ${getStatusColor(requirement.status as RequirementStatus)}`}>
+                      {getStatusIcon(requirement.status as RequirementStatus)}
                       <span>
-                        {requirement.status === 'not_started' && '未开始'}
-                        {requirement.status === 'in_progress' && '进行中'}
-                        {requirement.status === 'completed' && '已完成'}
+                        {(requirement.status as RequirementStatus) === 'not_started' && '未开始'}
+                        {(requirement.status as RequirementStatus) === 'in_progress' && '进行中'}
+                        {(requirement.status as RequirementStatus) === 'completed' && '已完成'}
                       </span>
                     </div>
                   </div>
