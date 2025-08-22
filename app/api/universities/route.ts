@@ -27,7 +27,7 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     let query = supabase
       .from('universities')
       .select('*')
-      .order('us_news_ranking', { ascending: true, nullsLast: true })
+      .order('us_news_ranking', { ascending: true, nullsFirst: false })
       .range(offset, offset + limit - 1)
 
     // 应用筛选条件
