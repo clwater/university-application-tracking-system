@@ -1,8 +1,10 @@
 import { NextRequest } from 'next/server'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { UserRole, Permission } from './database.types'
+import { createClient } from '@supabase/supabase-js'
+import { UserRole } from './database.types'
 import { hasPermission, PermissionError, UnauthorizedError } from './permissions'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export interface AuthenticatedUser {
   id: string
@@ -13,26 +15,34 @@ export interface AuthenticatedUser {
 // 从请求中获取认证用户信息
 export async function getAuthenticatedUser(request: NextRequest): Promise<AuthenticatedUser | null> {
   try {
-    const supabase = createServerComponentClient({ cookies })
-    
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession()
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null
+    }
 
-    if (error || !session?.user) {
+    const token = authHeader.substring(7)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+
+    const { data: { user }, error } = await supabase.auth.getUser(token)
+
+    if (error || !user) {
       return null
     }
 
     // 获取用户角色
-    const userRole = await getUserRole(session.user.id)
+    const userRole = await getUserRole(user.id)
     if (!userRole) {
       return null
     }
 
     return {
-      id: session.user.id,
-      email: session.user.email!,
+      id: user.id,
+      email: user.email!,
       role: userRole,
     }
   } catch (error) {
@@ -44,7 +54,7 @@ export async function getAuthenticatedUser(request: NextRequest): Promise<Authen
 // 获取用户角色
 async function getUserRole(userId: string): Promise<UserRole | null> {
   try {
-    const supabase = createServerComponentClient({ cookies })
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // 检查是否是学生
     const { data: student } = await supabase
@@ -161,7 +171,7 @@ export async function verifyResourceOwnership(
   resourceId: string
 ): Promise<boolean> {
   try {
-    const supabase = createServerComponentClient({ cookies })
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     switch (resourceType) {
       case 'application':
