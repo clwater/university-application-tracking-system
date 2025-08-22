@@ -18,6 +18,26 @@ export default function AuthCallback() {
       }
 
       if (data.session) {
+        // 尝试为新验证的用户创建档案
+        try {
+          const response = await fetch('/api/auth/setup-profile', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${data.session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          })
+
+          if (response.ok) {
+            const result = await response.json()
+            console.log('Profile setup result:', result)
+          } else {
+            console.log('Profile already exists or error occurred')
+          }
+        } catch (error) {
+          console.error('Error setting up profile:', error)
+        }
+
         router.push('/dashboard')
       } else {
         router.push('/auth/login')

@@ -36,8 +36,12 @@ export default function StudentDashboard() {
   }
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push('/auth/login')
+    try {
+      await signOut()
+      // 跳转逻辑现在在AuthContext中处理
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
   }
 
   const tabs = [

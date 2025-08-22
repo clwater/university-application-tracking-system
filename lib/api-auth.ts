@@ -78,8 +78,8 @@ async function getUserRole(userId: string): Promise<UserRole | null> {
       return 'parent'
     }
 
-    // 默认返回学生角色
-    return 'student'
+    // 如果没有找到角色记录，返回null
+    return null
   } catch (error) {
     console.error('Error getting user role:', error)
     return null

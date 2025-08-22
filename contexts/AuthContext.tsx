@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { UserRole } from '@/lib/database.types'
 
@@ -17,6 +18,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [userRole, setUserRole] = useState<UserRole | null>(null)
@@ -76,16 +78,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // 默认为学生角色
-      setUserRole('student')
+      // 如果没有找到角色记录，设置为null，需要用户完善档案
+      setUserRole(null)
     } catch (error) {
       console.error('Error fetching user role:', error)
-      setUserRole('student') // 默认角色
+      setUserRole(null)
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+      // 等待状态更新完成后跳转
+      setTimeout(() => {
+        router.push('/auth/login')
+      }, 100)
+    } catch (error) {
+      console.error('Sign out error:', error)
+      router.push('/auth/login')
+    }
   }
 
   const getUserProfile = async () => {
