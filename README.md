@@ -96,13 +96,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - 在 Supabase Dashboard 中执行 `test-data-create.sql` 创建数据表
 - 导入 `test-data-real-users.sql` 获取测试数据（可选）
 
-5. **配置邮件模板**
-
-- 在 Supabase Dashboard → Authentication → Email Templates
-- 使用 `email-templates-simple/` 目录中的模板
-- 配置注册确认和密码重置邮件
-
-6. **启动开发服务器**
+5. **启动开发服务器**
 ```bash
 npm run dev
 ```
