@@ -174,10 +174,6 @@ university-application-tracking-system/
 │   └── permissions.ts               # 权限检查工具
 ├── 📊 docs/                         # 文档
 │   └── api-documentation.md         # API 文档
-├── 📧 email-templates-simple/       # 邮件模板
-├── 🗃️ SQL 文件/                      # 数据库脚本
-│   ├── rls-policies-simple.sql      # RLS 策略
-│   └── test-data-real-users.sql     # 测试数据
 └── 📋 配置文件
     ├── package.json                 # 项目依赖
     ├── next.config.ts               # Next.js 配置
