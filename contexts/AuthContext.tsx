@@ -26,45 +26,103 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 获取初始会话
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        await fetchUserRole(session.user.id)
-      }
+    let timeoutId: NodeJS.Timeout | null = null
+    
+    // 设置5秒超时，防止无限加载
+    timeoutId = setTimeout(() => {
+      console.warn('AuthContext: Authentication timeout, setting loading to false')
       setLoading(false)
-    })
+    }, 5000)
+
+    // 获取初始会话
+    const initAuth = async () => {
+      try {
+        console.log('AuthContext: Getting initial session...')
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('AuthContext: Error getting session:', error)
+          setLoading(false)
+          return
+        }
+        
+        console.log('AuthContext: Initial session:', session?.user?.id || 'none')
+        setSession(session)
+        setUser(session?.user ?? null)
+        
+        if (session?.user) {
+          await fetchUserRole(session.user.id)
+        }
+        
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('AuthContext: Error in initAuth:', error)
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+        setLoading(false)
+      }
+    }
+
+    initAuth()
 
     // 监听认证状态变化
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('AuthContext: Auth state changed:', event, session?.user?.id || 'none')
       setSession(session)
       setUser(session?.user ?? null)
+      
       if (session?.user) {
         await fetchUserRole(session.user.id)
       } else {
         setUserRole(null)
       }
+      
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
   }, [])
 
   const fetchUserRole = async (userId: string) => {
     try {
       console.log('AuthContext: Fetching user role for userId:', userId)
       
+      // 添加超时控制
+      const timeout = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 10000)
+      )
+      
       // 首先检查是否是学生
-      const { data: student, error: studentError } = await supabase
+      const studentQuery = supabase
         .from('students')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle() // 使用 maybeSingle 而不是 single，避免 PGRST116 错误
+
+      const { data: student, error: studentError } = await Promise.race([
+        studentQuery,
+        timeout
+      ]) as any
 
       console.log('AuthContext: Student query result:', { student, studentError })
+
+      if (studentError) {
+        console.log('AuthContext: Student query error (might be normal):', studentError.message)
+      }
 
       if (student) {
         console.log('AuthContext: Setting role to student')
@@ -73,13 +131,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 然后检查是否是家长
-      const { data: parent, error: parentError } = await supabase
+      const parentQuery = supabase
         .from('parents')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle() // 使用 maybeSingle 而不是 single
+
+      const { data: parent, error: parentError } = await Promise.race([
+        parentQuery,
+        timeout
+      ]) as any
 
       console.log('AuthContext: Parent query result:', { parent, parentError })
+
+      if (parentError) {
+        console.log('AuthContext: Parent query error (might be normal):', parentError.message)
+      }
 
       if (parent) {
         console.log('AuthContext: Setting role to parent')
@@ -91,7 +158,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('AuthContext: No role found, setting to null')
       setUserRole(null)
     } catch (error) {
-      console.error('Error fetching user role:', error)
+      console.error('AuthContext: Error fetching user role:', error)
+      // 即使出错也设置为 null，让用户可以设置档案
       setUserRole(null)
     }
   }

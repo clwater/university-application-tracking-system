@@ -4,18 +4,26 @@
 export const getSupabaseUrl = (): string => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   if (!url) {
-    console.warn('NEXT_PUBLIC_SUPABASE_URL is not set, using fallback')
+    console.error('NEXT_PUBLIC_SUPABASE_URL is not set! Please check your environment variables.')
+    if (typeof window !== 'undefined') {
+      console.error('Current environment variables:', {
+        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 20) + '...'
+      })
+    }
     return 'https://placeholder.supabase.co'
   }
+  console.log('Supabase URL loaded:', url)
   return url
 }
 
 export const getSupabaseAnonKey = (): string => {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!key) {
-    console.warn('NEXT_PUBLIC_SUPABASE_ANON_KEY is not set, using fallback')
+    console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY is not set! Please check your environment variables.')
     return 'placeholder-anon-key'
   }
+  console.log('Supabase Anon Key loaded:', key.slice(0, 20) + '...')
   return key
 }
 
