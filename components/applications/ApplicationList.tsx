@@ -23,6 +23,7 @@ export default function ApplicationList() {
   const [showUniversitySearch, setShowUniversitySearch] = useState(false)
   const [editingApplication, setEditingApplication] = useState<ApplicationWithUniversity | null>(null)
   const [viewingApplication, setViewingApplication] = useState<ApplicationWithUniversity | null>(null)
+  const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null)
   const [filters, setFilters] = useState({
     status: '',
     search: '',
@@ -92,6 +93,8 @@ export default function ApplicationList() {
   }
 
   const handleAddApplication = async (university: University) => {
+    console.log('handleAddApplication called with:', university.name)
+    
     // 检查是否已经申请过这所大学
     const existingApplication = applications.find(app => app.university_id === university.id)
     if (existingApplication) {
@@ -99,10 +102,9 @@ export default function ApplicationList() {
       return
     }
 
+    setSelectedUniversity(university)
     setShowUniversitySearch(false)
     setShowAddForm(true)
-    // 这里需要传递选中的大学信息
-    // 暂时先关闭搜索界面，显示表单
   }
 
   const handleEditApplication = (application: ApplicationWithUniversity) => {
@@ -135,6 +137,7 @@ export default function ApplicationList() {
   const handleFormClose = () => {
     setShowAddForm(false)
     setEditingApplication(null)
+    setSelectedUniversity(null)
     setShowUniversitySearch(false)
   }
 
@@ -287,9 +290,9 @@ export default function ApplicationList() {
       )}
 
       {/* 申请表单模态框 */}
-      {showAddForm && editingApplication && (
+      {showAddForm && (editingApplication || selectedUniversity) && (
         <ApplicationForm
-          university={editingApplication.universities}
+          university={editingApplication ? editingApplication.universities : selectedUniversity!}
           existingApplication={editingApplication}
           onClose={handleFormClose}
           onSuccess={handleFormSuccess}

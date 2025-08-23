@@ -53,6 +53,7 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
         .order('us_news_ranking', { ascending: true, nullsFirst: false })
 
       if (error) throw error
+      console.log('Fetched universities:', data?.length || 0)
       setUniversities(data || [])
     } catch (error) {
       console.error('Error fetching universities:', error)
@@ -257,7 +258,10 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
                 className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
                   isSelected(university) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
                 }`}
-                onClick={() => onSelectUniversity(university)}
+                onClick={() => {
+                  console.log('University selected:', university.name)
+                  onSelectUniversity(university)
+                }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
