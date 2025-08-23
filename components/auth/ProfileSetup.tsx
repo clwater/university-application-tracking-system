@@ -14,6 +14,7 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
   const { user, refreshUserRole } = useAuth()
   const [loading, setLoading] = useState(false)
   const [checkingExisting, setCheckingExisting] = useState(true)
+  const [checkError, setCheckError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     graduationYear: '',
@@ -35,30 +36,62 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
 
       console.log('ProfileSetup: Checking existing profile for user:', user.id)
       
+      // 设置10秒超时
+      const timeoutId = setTimeout(() => {
+        console.warn('ProfileSetup: Check timeout, showing setup form')
+        setCheckError('网络请求超时，将显示设置表单')
+        setCheckingExisting(false)
+      }, 10000)
+
       try {
         // 并行检查学生和家长档案，使用 maybeSingle 避免错误
-        const [studentResult, parentResult] = await Promise.all([
+        const profilePromise = Promise.all([
           supabase
             .from('students')
-            .select('*')
+            .select('id, user_id, name')
             .eq('user_id', user.id)
             .maybeSingle(),
           supabase
             .from('parents')
-            .select('*')
+            .select('id, user_id, name')
             .eq('user_id', user.id)
             .maybeSingle()
         ])
 
+        const [studentResult, parentResult] = await profilePromise
+
+        // 清除超时
+        clearTimeout(timeoutId)
+
         const { data: studentData, error: studentError } = studentResult
         const { data: parentData, error: parentError } = parentResult
 
+        console.log('ProfileSetup: Query results:', { 
+          studentData: studentData ? 'found' : 'none',
+          parentData: parentData ? 'found' : 'none',
+          studentError: studentError?.message,
+          parentError: parentError?.message,
+          studentErrorCode: studentError?.code,
+          parentErrorCode: parentError?.code,
+          authUser: user?.id
+        })
+
         if (studentError && studentError.code !== 'PGRST116') {
           console.error('ProfileSetup: Student query error:', studentError)
+          if (studentError.code === '42501' || studentError.message.includes('permission denied')) {
+            setCheckError('数据库权限配置错误，请联系管理员配置 RLS 策略')
+          } else {
+            setCheckError(`学生档案查询错误: ${studentError.message} (代码: ${studentError.code})`)
+          }
         }
 
         if (parentError && parentError.code !== 'PGRST116') {
           console.error('ProfileSetup: Parent query error:', parentError)
+          if (parentError.code === '42501' || parentError.message.includes('permission denied')) {
+            setCheckError('数据库权限配置错误，请联系管理员配置 RLS 策略')
+          } else {
+            setCheckError(`家长档案查询错误: ${parentError.message} (代码: ${parentError.code})`)
+          }
         }
 
         if (studentData) {
@@ -78,6 +111,8 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
         console.log('ProfileSetup: No existing profile found, showing setup form')
       } catch (error) {
         console.error('ProfileSetup: Error checking existing profile:', error)
+        clearTimeout(timeoutId)
+        setCheckError(`检查档案时出错: ${error instanceof Error ? error.message : '未知错误'}`)
       } finally {
         setCheckingExisting(false)
       }
@@ -148,6 +183,21 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">检查现有档案...</p>
+          {checkError && (
+            <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded-md">
+              <p className="text-sm text-yellow-800">{checkError}</p>
+            </div>
+          )}
+          <button
+            onClick={() => {
+              console.log('ProfileSetup: User manually skipped check')
+              setCheckingExisting(false)
+              setCheckError(null)
+            }}
+            className="mt-4 px-4 py-2 text-sm text-gray-600 hover:text-gray-800 underline"
+          >
+            跳过检查，直接设置档案
+          </button>
         </div>
       </div>
     )

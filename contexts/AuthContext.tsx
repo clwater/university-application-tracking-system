@@ -28,11 +28,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null
     
-    // 设置5秒超时，防止无限加载
+    // 设置8秒超时，移动端网络可能较慢
     timeoutId = setTimeout(() => {
       console.warn('AuthContext: Authentication timeout, setting loading to false')
+      console.warn('AuthContext: User agent:', typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown')
+      console.warn('AuthContext: Network type:', typeof navigator !== 'undefined' ? (navigator as any).connection?.effectiveType || 'unknown' : 'unknown')
       setLoading(false)
-    }, 5000)
+    }, 8000)
 
     // 获取初始会话
     const initAuth = async () => {
