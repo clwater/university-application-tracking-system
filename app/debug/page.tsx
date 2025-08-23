@@ -166,8 +166,22 @@ export default function DebugPage() {
               返回主页
             </button>
             <button
-              onClick={() => supabase.auth.signOut()}
-              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              onClick={async () => {
+                console.log('Debug page: Logout button clicked')
+                try {
+                  const { error } = await supabase.auth.signOut()
+                  if (error) {
+                    console.error('Debug page: Logout error:', error)
+                  } else {
+                    console.log('Debug page: Logout successful')
+                  }
+                  window.location.href = '/auth/login'
+                } catch (error) {
+                  console.error('Debug page: Logout exception:', error)
+                  window.location.href = '/auth/login'
+                }
+              }}
+              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 active:bg-red-800 transition-colors min-h-[44px] touch-manipulation"
             >
               退出登录
             </button>

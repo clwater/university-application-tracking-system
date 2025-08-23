@@ -42,10 +42,19 @@ export default function StudentDashboard() {
 
   const handleSignOut = async () => {
     try {
+      console.log('StudentDashboard: Sign out button clicked')
+      
       await signOut()
+      
       // 跳转逻辑现在在AuthContext中处理
+      console.log('StudentDashboard: Sign out completed')
     } catch (error) {
-      console.error('Error signing out:', error)
+      console.error('StudentDashboard: Error signing out:', error)
+      
+      // 强制跳转作为备选方案
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login'
+      }
     }
   }
 
@@ -107,7 +116,8 @@ export default function StudentDashboard() {
                   </button>
                   <button
                     onClick={handleSignOut}
-                    className="p-2 text-gray-400 hover:text-gray-600"
+                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors active:bg-gray-100 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    title="退出登录"
                   >
                     <LogOut className="h-4 w-4" />
                   </button>

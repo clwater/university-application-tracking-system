@@ -153,14 +153,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut()
-      // 等待状态更新完成后跳转
-      setTimeout(() => {
-        router.push('/auth/login')
-      }, 100)
-    } catch (error) {
-      console.error('Sign out error:', error)
+      console.log('AuthContext: Starting sign out process...')
+      
+      // 清除本地状态
+      setUser(null)
+      setSession(null)
+      setUserRole(null)
+      
+      // 执行 Supabase 登出
+      const { error } = await supabase.auth.signOut()
+      
+      if (error) {
+        console.error('AuthContext: Supabase sign out error:', error)
+      } else {
+        console.log('AuthContext: Supabase sign out successful')
+      }
+      
+      // 强制跳转到登录页面
+      console.log('AuthContext: Redirecting to login page...')
       router.push('/auth/login')
+      
+      // 移动端兼容性：使用 window.location 作为备选方案
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/login'
+        }
+      }, 500)
+      
+    } catch (error) {
+      console.error('AuthContext: Sign out error:', error)
+      
+      // 清除本地状态
+      setUser(null)
+      setSession(null)
+      setUserRole(null)
+      
+      // 强制跳转
+      router.push('/auth/login')
+      
+      // 移动端备选方案
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/login'
+        }
+      }, 500)
     }
   }
 
