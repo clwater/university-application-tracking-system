@@ -18,6 +18,7 @@ export default function ParentDashboard() {
   const [students, setStudents] = useState<StudentWithApplications[]>([])
   const [selectedStudent, setSelectedStudent] = useState<StudentWithApplications | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     loadProfile()
@@ -85,6 +86,10 @@ export default function ParentDashboard() {
     }
   }
 
+  const handleSettings = () => {
+    setShowSettings(true)
+  }
+
   const getStudentStats = (student: StudentWithApplications) => {
     const applications = student.applications || []
     const total = applications.length
@@ -140,7 +145,11 @@ export default function ParentDashboard() {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <button className="p-2 text-gray-400 hover:text-gray-600">
+                  <button 
+                    onClick={handleSettings}
+                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="设置"
+                  >
                     <Settings className="h-4 w-4" />
                   </button>
                   <button
@@ -438,6 +447,90 @@ export default function ParentDashboard() {
           </div>
         )}
       </main>
+
+      {/* 设置模态框 */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-bold">设置</h2>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* 个人信息设置 */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">个人信息</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">姓名</label>
+                    <div className="mt-1 text-sm text-gray-900">{profile?.name || '未设置'}</div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">邮箱</label>
+                    <div className="mt-1 text-sm text-gray-900">{user?.email}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 关联学生 */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">关联学生</h3>
+                <div className="space-y-2">
+                  {students.length > 0 ? students.map(student => (
+                    <div key={student.id} className="text-sm text-gray-900 p-2 bg-gray-50 rounded">
+                      {student.name} ({student.email})
+                    </div>
+                  )) : (
+                    <div className="text-sm text-gray-500">暂无关联学生</div>
+                  )}
+                </div>
+              </div>
+
+              {/* 通知设置 */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">通知设置</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">申请状态更新</label>
+                    <div className="text-sm text-gray-500">开发中</div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-gray-700">截止日期提醒</label>
+                    <div className="text-sm text-gray-500">开发中</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 操作按钮 */}
+              <div className="flex gap-3 pt-4 border-t">
+                <button
+                  onClick={() => {
+                    setShowSettings(false)
+                    alert('档案编辑功能开发中...')
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  编辑档案
+                </button>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  关闭
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
