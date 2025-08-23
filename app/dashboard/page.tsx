@@ -13,9 +13,10 @@ export default function DashboardPage() {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState<UserRole>('student')
   const [needsProfileSetup, setNeedsProfileSetup] = useState(false)
+  const [profileSetupChecked, setProfileSetupChecked] = useState(false)
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !profileSetupChecked) {
       console.log('Dashboard: State check - user:', user?.id, 'userRole:', userRole)
       if (!user) {
         console.log('Dashboard: No user, redirecting to login')
@@ -32,8 +33,9 @@ export default function DashboardPage() {
       } else {
         console.log('Dashboard: User has role:', userRole, 'showing dashboard')
       }
+      setProfileSetupChecked(true)
     }
-  }, [user, userRole, loading, router])
+  }, [user, userRole, loading, router, profileSetupChecked])
 
   if (loading) {
     return (
@@ -57,8 +59,9 @@ export default function DashboardPage() {
         <ProfileSetup
           role={selectedRole}
           onComplete={() => {
+            console.log('Dashboard: ProfileSetup completed, resetting state')
             setNeedsProfileSetup(false)
-            window.location.reload() // 重新加载以更新角色
+            setProfileSetupChecked(false) // 重置检查状态，触发重新检查
           }}
         />
       </div>

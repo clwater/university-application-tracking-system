@@ -28,40 +28,54 @@ export default function ProfileSetup({ role, onComplete }: ProfileSetupProps) {
   // 检查用户是否已经有档案
   useEffect(() => {
     const checkExistingProfile = async () => {
-      if (!user) return
+      if (!user) {
+        setCheckingExisting(false)
+        return
+      }
 
       console.log('ProfileSetup: Checking existing profile for user:', user.id)
       
       try {
-        // 检查学生档案
-        const { data: studentData, error: studentError } = await supabase
-          .from('students')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
+        // 并行检查学生和家长档案，使用 maybeSingle 避免错误
+        const [studentResult, parentResult] = await Promise.all([
+          supabase
+            .from('students')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle(),
+          supabase
+            .from('parents')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle()
+        ])
+
+        const { data: studentData, error: studentError } = studentResult
+        const { data: parentData, error: parentError } = parentResult
+
+        if (studentError && studentError.code !== 'PGRST116') {
+          console.error('ProfileSetup: Student query error:', studentError)
+        }
+
+        if (parentError && parentError.code !== 'PGRST116') {
+          console.error('ProfileSetup: Parent query error:', parentError)
+        }
 
         if (studentData) {
-          console.log('ProfileSetup: Found existing student profile:', studentData)
+          console.log('ProfileSetup: Found existing student profile, refreshing role')
           await refreshUserRole()
           onComplete()
           return
         }
-
-        // 检查家长档案
-        const { data: parentData, error: parentError } = await supabase
-          .from('parents')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
 
         if (parentData) {
-          console.log('ProfileSetup: Found existing parent profile:', parentData)
+          console.log('ProfileSetup: Found existing parent profile, refreshing role')
           await refreshUserRole()
           onComplete()
           return
         }
 
-        console.log('ProfileSetup: No existing profile found')
+        console.log('ProfileSetup: No existing profile found, showing setup form')
       } catch (error) {
         console.error('ProfileSetup: Error checking existing profile:', error)
       } finally {

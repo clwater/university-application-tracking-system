@@ -101,51 +101,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('AuthContext: Fetching user role for userId:', userId)
       
-      // 添加超时控制
-      const timeout = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 10000)
-      )
-      
-      // 首先检查是否是学生
-      const studentQuery = supabase
-        .from('students')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle() // 使用 maybeSingle 而不是 single，避免 PGRST116 错误
+      // 并行查询学生和家长档案，提高效率
+      const [studentResult, parentResult] = await Promise.all([
+        supabase
+          .from('students')
+          .select('id, user_id')
+          .eq('user_id', userId)
+          .maybeSingle(),
+        supabase
+          .from('parents')
+          .select('id, user_id')
+          .eq('user_id', userId)
+          .maybeSingle()
+      ])
 
-      const { data: student, error: studentError } = await Promise.race([
-        studentQuery,
-        timeout
-      ]) as any
+      const { data: student, error: studentError } = studentResult
+      const { data: parent, error: parentError } = parentResult
 
-      console.log('AuthContext: Student query result:', { student, studentError })
+      // 只记录真正的错误，忽略 "No rows" 错误
+      if (studentError && studentError.code !== 'PGRST116') {
+        console.log('AuthContext: Student query error:', studentError.message)
+      }
 
-      if (studentError) {
-        console.log('AuthContext: Student query error (might be normal):', studentError.message)
+      if (parentError && parentError.code !== 'PGRST116') {
+        console.log('AuthContext: Parent query error:', parentError.message)
       }
 
       if (student) {
         console.log('AuthContext: Setting role to student')
         setUserRole('student')
         return
-      }
-
-      // 然后检查是否是家长
-      const parentQuery = supabase
-        .from('parents')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle() // 使用 maybeSingle 而不是 single
-
-      const { data: parent, error: parentError } = await Promise.race([
-        parentQuery,
-        timeout
-      ]) as any
-
-      console.log('AuthContext: Parent query result:', { parent, parentError })
-
-      if (parentError) {
-        console.log('AuthContext: Parent query error (might be normal):', parentError.message)
       }
 
       if (parent) {
