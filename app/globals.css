@@ -153,6 +153,16 @@ body {
   transform: translateY(-1px);
 }
 
+/* 隐藏滚动条 */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 /* 通知样式 */
 .notification-enter {
   opacity: 0;

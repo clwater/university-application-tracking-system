@@ -33,31 +33,33 @@ export default function UniversityCard({
   const deadlines = getDeadlines()
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow">
       {/* 头部信息 */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900">{university.name}</h3>
-          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 pr-2">{university.name}</h3>
+          <div className="mt-2 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
             {university.city && university.state && (
               <div className="flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                {university.city}, {university.state}
-                {university.country && university.country !== '美国' && (
-                  <span className="ml-1">({university.country})</span>
-                )}
+                <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {university.city}, {university.state}
+                  {university.country && university.country !== '美国' && (
+                    <span className="ml-1">({university.country})</span>
+                  )}
+                </span>
               </div>
             )}
             {university.us_news_ranking && (
               <div className="flex items-center gap-1">
-                <Star className="h-4 w-4" />
-                US News 排名 #{university.us_news_ranking}
+                <Star className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span>US News 排名 #{university.us_news_ranking}</span>
               </div>
             )}
             {university.acceptance_rate && (
               <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                录取率 {(university.acceptance_rate * 100).toFixed(1)}%
+                <Users className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span>录取率 {(university.acceptance_rate * 100).toFixed(1)}%</span>
               </div>
             )}
           </div>
@@ -76,18 +78,18 @@ export default function UniversityCard({
       {/* 学费信息 */}
       <div className="mb-4">
         <h4 className="text-sm font-semibold text-gray-700 mb-2">学费信息</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
           <div className="flex items-center gap-1">
-            <DollarSign className="h-4 w-4 text-gray-500" />
-            <span>州内: {formatCurrency(university.tuition_in_state)}</span>
+            <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
+            <span className="truncate">州内: {formatCurrency(university.tuition_in_state)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <DollarSign className="h-4 w-4 text-gray-500" />
-            <span>州外: {formatCurrency(university.tuition_out_state)}</span>
+            <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
+            <span className="truncate">州外: {formatCurrency(university.tuition_out_state)}</span>
           </div>
         </div>
         {university.application_fee && (
-          <div className="mt-1 text-sm text-gray-600">
+          <div className="mt-1 text-xs sm:text-sm text-gray-600">
             申请费: {formatCurrency(university.application_fee)}
           </div>
         )}
@@ -97,10 +99,10 @@ export default function UniversityCard({
       {deadlines && (
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
             申请截止日期
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
             {deadlines.early_decision && (
               <div>
                 <span className="font-medium">ED:</span> {deadlines.early_decision}
@@ -127,11 +129,11 @@ export default function UniversityCard({
 
       {/* 操作按钮 */}
       {showActions && (
-        <div className="flex gap-2 pt-4 border-t">
+        <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
           {onAddApplication && (
             <button
               onClick={() => onAddApplication(university)}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium"
             >
               添加申请
             </button>
@@ -139,9 +141,9 @@ export default function UniversityCard({
           {onViewDetails && (
             <button
               onClick={() => onViewDetails(university)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium flex items-center gap-1"
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium flex items-center justify-center gap-1"
             >
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
               详情
             </button>
           )}

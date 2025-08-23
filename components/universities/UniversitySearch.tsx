@@ -150,21 +150,21 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
   return (
     <div className="bg-white rounded-lg shadow-md">
       {/* 搜索栏 */}
-      <div className="p-6 border-b">
-        <div className="flex gap-4 items-center">
+      <div className="p-4 sm:p-6 border-b">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
               placeholder="搜索大学名称..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               value={filters.name}
               onChange={(e) => setFilters({ ...filters, name: e.target.value })}
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 whitespace-nowrap text-sm sm:text-base"
           >
             <Filter className="h-4 w-4" />
             筛选
@@ -173,8 +173,8 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
 
         {/* 筛选器 */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-md">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">国家</label>
                 <input
@@ -245,9 +245,9 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
       </div>
 
       {/* 大学列表 */}
-      <div className="max-h-96 overflow-y-auto">
+      <div className="max-h-80 sm:max-h-96 overflow-y-auto">
         {filteredUniversities.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 text-sm sm:text-base">
             没有找到符合条件的大学
           </div>
         ) : (
@@ -255,7 +255,7 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
             {filteredUniversities.map((university) => (
               <div
                 key={university.id}
-                className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                className={`p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
                   isSelected(university) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
                 }`}
                 onClick={() => {
@@ -264,25 +264,25 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
                 }}
               >
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{university.name}</h3>
-                    <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate pr-2">{university.name}</h3>
+                    <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                       {university.city && university.state && (
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {university.city}, {university.state}
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span className="truncate">{university.city}, {university.state}</span>
                         </div>
                       )}
                       {university.us_news_ranking && (
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4" />
-                          排名 #{university.us_news_ranking}
+                          <Star className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span>排名 #{university.us_news_ranking}</span>
                         </div>
                       )}
                       {university.acceptance_rate && (
                         <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          录取率 {(university.acceptance_rate * 100).toFixed(1)}%
+                          <Users className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span>录取率 {(university.acceptance_rate * 100).toFixed(1)}%</span>
                         </div>
                       )}
                     </div>
@@ -295,8 +295,8 @@ export default function UniversitySearch({ onSelectUniversity, selectedUniversit
                     )}
                   </div>
                   {isSelected(university) && (
-                    <div className="ml-2 text-blue-600">
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="ml-2 text-blue-600 flex-shrink-0">
+                      <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>

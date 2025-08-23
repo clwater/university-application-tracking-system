@@ -23,6 +23,7 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
   const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null)
+  const [mobileView, setMobileView] = useState<'search' | 'details'>('search')
 
   useEffect(() => {
     loadProfile()
@@ -132,12 +133,38 @@ export default function StudentDashboard() {
         {/* 标签页导航 */}
         <div className="mb-6">
           <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
+            {/* 移动端可滚动水平导航 */}
+            <nav className="sm:hidden -mb-px flex overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex space-x-1 px-4">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex flex-col items-center justify-center min-w-[80px] py-3 px-2 rounded-lg font-medium text-xs transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-xl mb-1">{tab.icon}</span>
+                    <span className="text-center leading-tight whitespace-nowrap">
+                      {tab.label}
+                    </span>
+                    {activeTab === tab.id && (
+                      <div className="w-4 h-0.5 bg-blue-600 rounded-full mt-1"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </nav>
+
+            {/* 桌面端水平导航 */}
+            <nav className="hidden sm:flex -mb-px space-x-8">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm ${
+                  className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -210,35 +237,84 @@ export default function StudentDashboard() {
           )}
 
           {activeTab === 'universities' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* 大学搜索 */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4">大学搜索</h3>
-                <UniversitySearch
-                  onSelectUniversity={(university) => {
-                    setSelectedUniversity(university)
-                    console.log('Selected university:', university)
-                  }}
-                  selectedUniversities={selectedUniversity ? [selectedUniversity] : []}
-                />
+            <>
+              {/* 移动端切换按钮 */}
+              <div className="lg:hidden mb-4">
+                <div className="bg-white rounded-lg shadow-md p-2 flex">
+                  <button
+                    onClick={() => setMobileView('search')}
+                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                      mobileView === 'search'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    搜索大学
+                  </button>
+                  <button
+                    onClick={() => setMobileView('details')}
+                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                      mobileView === 'details'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                    disabled={!selectedUniversity}
+                  >
+                    {selectedUniversity ? '大学详情' : '选择大学查看详情'}
+                  </button>
+                </div>
               </div>
 
-              {/* 大学详情 */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold mb-4">大学详情</h3>
-                {selectedUniversity ? (
-                  <UniversityCard
-                    university={selectedUniversity}
-                    showActions={false}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* 大学搜索 */}
+                <div className={`bg-white rounded-lg shadow-md p-6 ${
+                  mobileView === 'details' ? 'hidden lg:block' : ''
+                }`}>
+                  <h3 className="text-lg font-semibold mb-4">大学搜索</h3>
+                  <UniversitySearch
+                    onSelectUniversity={(university) => {
+                      setSelectedUniversity(university)
+                      // 在移动端选择大学后自动切换到详情页面
+                      if (window.innerWidth < 1024) {
+                        setMobileView('details')
+                      }
+                      console.log('Selected university:', university)
+                    }}
+                    selectedUniversities={selectedUniversity ? [selectedUniversity] : []}
                   />
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    <div className="text-4xl mb-4">🏫</div>
-                    <p>点击左侧大学列表中的任意大学查看详情</p>
+                </div>
+
+                {/* 大学详情 */}
+                <div className={`bg-white rounded-lg shadow-md p-6 ${
+                  mobileView === 'search' ? 'hidden lg:block' : ''
+                }`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">大学详情</h3>
+                    {/* 移动端返回按钮 */}
+                    {selectedUniversity && (
+                      <button
+                        onClick={() => setMobileView('search')}
+                        className="lg:hidden text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        ← 返回搜索
+                      </button>
+                    )}
                   </div>
-                )}
+                  {selectedUniversity ? (
+                    <UniversityCard
+                      university={selectedUniversity}
+                      showActions={false}
+                    />
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <div className="text-4xl mb-4">🏫</div>
+                      <p className="hidden lg:block">点击左侧大学列表中的任意大学查看详情</p>
+                      <p className="lg:hidden">点击大学列表中的任意大学查看详情</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {activeTab === 'comparison' && (
