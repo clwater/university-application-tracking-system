@@ -72,12 +72,28 @@ export default function ApplicationCard({
 
     setLoading(true)
     try {
-      const { error } = await supabase
+      // 首先删除关联的申请要求
+      const { error: requirementsError } = await supabase
+        .from('application_requirements')
+        .delete()
+        .eq('application_id', application.id)
+
+      if (requirementsError) {
+        console.error('Error deleting requirements:', requirementsError)
+        throw requirementsError
+      }
+
+      // 然后删除申请
+      const { error: applicationError } = await supabase
         .from('applications')
         .delete()
         .eq('id', application.id)
 
-      if (error) throw error
+      if (applicationError) {
+        console.error('Error deleting application:', applicationError)
+        throw applicationError
+      }
+
       onDelete(application.id)
     } catch (error) {
       console.error('Error deleting application:', error)
