@@ -12,6 +12,8 @@ import { StudentOnly } from '../auth/PermissionGate'
 import NotificationCenter from '../notifications/NotificationCenter'
 import UniversityComparison from '../universities/UniversityComparison'
 import UniversitySearch from '../universities/UniversitySearch'
+import UniversityCard from '../universities/UniversityCard'
+import { University } from '@/lib/database.types'
 
 export default function StudentDashboard() {
   const { user, userRole, signOut, getUserProfile } = useAuth()
@@ -20,6 +22,7 @@ export default function StudentDashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
+  const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null)
 
   useEffect(() => {
     loadProfile()
@@ -207,14 +210,34 @@ export default function StudentDashboard() {
           )}
 
           {activeTab === 'universities' && (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4">大学搜索</h3>
-              <UniversitySearch
-                onSelectUniversity={(university) => {
-                  // 这里可以添加选择大学后的逻辑
-                  console.log('Selected university:', university)
-                }}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* 大学搜索 */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold mb-4">大学搜索</h3>
+                <UniversitySearch
+                  onSelectUniversity={(university) => {
+                    setSelectedUniversity(university)
+                    console.log('Selected university:', university)
+                  }}
+                  selectedUniversities={selectedUniversity ? [selectedUniversity] : []}
+                />
+              </div>
+
+              {/* 大学详情 */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold mb-4">大学详情</h3>
+                {selectedUniversity ? (
+                  <UniversityCard
+                    university={selectedUniversity}
+                    showActions={false}
+                  />
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <div className="text-4xl mb-4">🏫</div>
+                    <p>点击左侧大学列表中的任意大学查看详情</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
