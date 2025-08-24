@@ -1,238 +1,240 @@
-# 🎓 大学申请追踪系统
+[中文版本](README-CN.md) | English Version
 
-一个全面的大学申请管理平台，帮助学生和家长追踪申请进度、管理截止日期和要求。支持完整的申请生命周期管理，从大学搜索到最终录取决定。
+# 🎓 University Application Tracking System
+
+A comprehensive university application management platform that helps students and parents track application progress, manage deadlines and requirements. Supports complete application lifecycle management, from university search to final admission decisions.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/your-username/university-application-tracking-system)
 
-## 🌟 在线演示
+## 🌟 Live Demo
 
-- **生产环境**: [https://university-application-tracking-sys.vercel.app](https://university-application-tracking-sys.vercel.app)
-- **测试账户**: 
-  - 学生账户: `s.li@clwater.com` / 密码请联系管理员
-  - 家长账户: `p.li@clwater.com` / 密码请联系管理员
+- **Production Environment**: [https://university-application-tracking-sys.vercel.app](https://university-application-tracking-sys.vercel.app)
+- **Test Accounts**: 
+  - Student Account: `s.li@clwater.com` / Contact admin for password
+  - Parent Account: `p.li@clwater.com` / Contact admin for password
 
-## ✨ 功能特色
+## ✨ Features
 
-### 🎯 核心功能
-- **🔐 双角色系统**: 支持学生和家长两种角色，具有不同的权限和功能
-- **📊 智能仪表板**: 个性化的申请概览、进度统计和重要提醒
-- **📝 申请管理**: 完整的申请生命周期管理，从计划到决定
-- **🏫 大学搜索**: 强大的搜索和筛选功能，支持多维度比较
-- **⏰ 智能提醒**: 截止日期通知和状态变更提醒
-- **📋 要求追踪**: 详细的申请材料和文档准备进度管理
+### 🎯 Core Functions
+- **🔐 Dual Role System**: Supports both student and parent roles with different permissions and functions
+- **📊 Smart Dashboard**: Personalized application overview, progress statistics, and important reminders
+- **📝 Application Management**: Complete application lifecycle management, from planning to decision
+- **🏫 University Search**: Powerful search and filtering capabilities with multi-dimensional comparison
+- **⏰ Smart Reminders**: Deadline notifications and status change alerts
+- **📋 Requirements Tracking**: Detailed application materials and document preparation progress management
 
-### 👨‍🎓 学生功能
-- **个人档案管理**: GPA、标化成绩、目标国家等信息维护
-- **大学搜索与对比**: 按排名、地理位置、录取率等条件筛选大学
-- **申请创建与管理**: 支持 ED/EA/RD/滚动录取等不同类型申请
-- **材料要求追踪**: 管理每个申请的具体要求和截止日期
-- **进度可视化**: 直观的申请状态和完成度展示
-- **移动端优化**: 响应式设计，支持手机和平板使用
+### 👨‍🎓 Student Features
+- **Personal Profile Management**: GPA, standardized test scores, target countries, and other information maintenance
+- **University Search & Comparison**: Filter universities by ranking, location, acceptance rate, and other criteria
+- **Application Creation & Management**: Supports ED/EA/RD/Rolling admissions and other application types
+- **Material Requirements Tracking**: Manage specific requirements and deadlines for each application
+- **Progress Visualization**: Intuitive application status and completion display
+- **Mobile Optimization**: Responsive design supporting phone and tablet use
 
-### 👨‍👩‍👧‍👦 家长功能
-- **只读权限访问**: 查看孩子的申请进度和状态
-- **财务信息查看**: 申请费用和学费信息一览
-- **协作备注**: 添加支持性备注和观察
-- **进度监控**: 实时了解申请准备情况
+### 👨‍👩‍👧‍👦 Parent Features
+- **Read-only Access**: View child's application progress and status
+- **Financial Information View**: Overview of application fees and tuition costs
+- **Collaborative Notes**: Add supportive notes and observations
+- **Progress Monitoring**: Real-time understanding of application preparation status
 
-## 🛠 技术栈
+## 🛠 Technology Stack
 
-### 前端技术
-- **⚛️ Next.js 15**: App Router + 服务端渲染
-- **🔷 React 19**: 最新版本 React + TypeScript
-- **🎨 Tailwind CSS v4**: 现代化的 CSS 框架
-- **🔣 Lucide React**: 美观的图标库
-- **📅 date-fns**: 日期处理工具
+### Frontend Technologies
+- **⚛️ Next.js 15**: App Router + Server-side rendering
+- **🔷 React 19**: Latest React version + TypeScript
+- **🎨 Tailwind CSS v4**: Modern CSS framework
+- **🔣 Lucide React**: Beautiful icon library
+- **📅 date-fns**: Date handling utilities
 
-### 后端服务
-- **🗃️ Supabase**: PostgreSQL 数据库 + 实时订阅
-- **🔐 Supabase Auth**: 用户认证和授权
-- **📧 邮件服务**: 注册确认和密码重置
-- **🛡️ RLS 策略**: 行级安全策略保护数据
+### Backend Services
+- **🗃️ Supabase**: PostgreSQL database + real-time subscriptions
+- **🔐 Supabase Auth**: User authentication and authorization
+- **📧 Email Service**: Registration confirmation and password reset
+- **🛡️ RLS Policies**: Row Level Security policies for data protection
 
-### 开发工具
-- **📝 TypeScript 5**: 类型安全
-- **🔧 ESLint**: 代码质量检查
-- **📱 响应式设计**: 移动端优化
-- **🚀 Vercel 部署**: 自动化 CI/CD
+### Development Tools
+- **📝 TypeScript 5**: Type safety
+- **🔧 ESLint**: Code quality checking
+- **📱 Responsive Design**: Mobile optimization
+- **🚀 Vercel Deployment**: Automated CI/CD
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 前置要求
-- Node.js 18+ (推荐 LTS 版本)
-- npm 或 yarn 包管理器
-- Supabase 账户 (免费层可用)
+### Prerequisites
+- Node.js 18+ (LTS version recommended)
+- npm or yarn package manager
+- Supabase account (free tier available)
 
-### 安装步骤
+### Installation Steps
 
-1. **克隆项目**
+1. **Clone the Project**
 ```bash
 git clone git@github.com:clwater/university-application-tracking-system.git
 cd university-application-tracking-system
 ```
 
-2. **安装依赖**
+2. **Install Dependencies**
 ```bash
 npm install
-# 或者
+# or
 yarn install
 ```
 
-3. **配置环境变量**
+3. **Configure Environment Variables**
 
-创建 `.env.local` 文件并添加以下配置：
+Create `.env.local` file and add the following configuration:
 ```bash
-# Supabase 配置
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# 应用配置
+# Application Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-4. **设置数据库**
+4. **Setup Database**
 
-- 在 Supabase Dashboard 中执行 `test-data-create.sql` 创建数据表
-- 导入 `test-data-real-users.sql` 获取测试数据（可选）
+- Execute `test-data-create.sql` in Supabase Dashboard to create data tables
+- Import `test-data-real-users.sql` for test data (optional)
 
-5. **启动开发服务器**
+5. **Start Development Server**
 ```bash
 npm run dev
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
-## 📱 响应式设计
+## 📱 Responsive Design
 
-系统完全支持响应式设计，针对不同设备进行了优化：
+The system fully supports responsive design, optimized for different devices:
 
-- **📱 手机设备** (320px - 768px): 垂直导航、触摸优化
-- **📱 平板设备** (768px - 1024px): 适应性布局
-- **💻 桌面设备** (1024px+): 完整功能展示
+- **📱 Mobile Devices** (320px - 768px): Vertical navigation, touch optimization
+- **📱 Tablet Devices** (768px - 1024px): Adaptive layout
+- **💻 Desktop Devices** (1024px+): Full feature display
 
-### 移动端特色功能
-- 可滑动的标签导航
-- 智能的搜索/详情页面切换
-- 触摸友好的操作界面
-- 优化的文字大小和间距
+### Mobile Features
+- Swipeable tab navigation
+- Smart search/details page switching
+- Touch-friendly operation interface
+- Optimized text size and spacing
 
-## 🔐 安全与权限
+## 🔐 Security & Permissions
 
-### 认证系统
-- **JWT Token**: 基于 Supabase Auth
-- **邮箱验证**: 注册时需要验证邮箱
-- **密码重置**: 安全的密码重置流程
-- **会话管理**: 自动令牌刷新
+### Authentication System
+- **JWT Token**: Based on Supabase Auth
+- **Email Verification**: Email verification required during registration
+- **Password Reset**: Secure password reset process
+- **Session Management**: Automatic token refresh
 
-### 权限控制
-- **基于角色的访问控制 (RBAC)**
-- **行级安全策略 (RLS)**: 数据库层面的安全保护
-- **API 权限验证**: 每个 API 端点都有权限检查
-- **前端路由保护**: 未授权访问自动重定向
+### Permission Control
+- **Role-Based Access Control (RBAC)**
+- **Row Level Security (RLS)**: Database-level security protection
+- **API Permission Verification**: Permission checks for every API endpoint
+- **Frontend Route Protection**: Automatic redirection for unauthorized access
 
-### 角色权限矩阵
+### Role Permission Matrix
 
-| 功能 | 学生 | 家长 | 管理员(DB配置) |
-|------|------|------|-----------|
-| 查看个人申请 | ✅ | ✅ | ✅         |
-| 创建/编辑申请 | ✅ | ❌ | ✅         |
-| 大学搜索 | ✅ | ✅ | ✅         |
-| 添加备注 | ✅ | ✅ | ✅         |
-| 管理用户 | ❌ | ❌ | ✅         |
+| Function | Student | Parent | Admin(DB Config) |
+|----------|---------|--------|------------------|
+| View Personal Applications | ✅ | ✅ | ✅ |
+| Create/Edit Applications | ✅ | ❌ | ✅ |
+| University Search | ✅ | ✅ | ✅ |
+| Add Notes | ✅ | ✅ | ✅ |
+| Manage Users | ❌ | ❌ | ✅ |
 
-## 📊 项目结构
+## 📊 Project Structure
 
 ```
 university-application-tracking-system/
 ├── 🗂️ app/                          # Next.js 13+ App Router
-│   ├── api/                         # API 路由
-│   │   ├── auth/                    # 认证相关 API
-│   │   ├── student/                 # 学生功能 API
-│   │   ├── parent/                  # 家长功能 API
-│   │   └── universities/            # 大学数据 API
-│   ├── auth/                        # 认证页面
-│   ├── dashboard/                   # 主仪表板
-│   └── globals.css                  # 全局样式
-├── 🧩 components/                   # React 组件
-│   ├── auth/                        # 认证相关组件
-│   ├── applications/                # 申请管理组件
-│   ├── dashboard/                   # 仪表板组件
-│   ├── universities/                # 大学相关组件
-│   └── requirements/                # 要求追踪组件
+│   ├── api/                         # API routes
+│   │   ├── auth/                    # Authentication APIs
+│   │   ├── student/                 # Student function APIs
+│   │   ├── parent/                  # Parent function APIs
+│   │   └── universities/            # University data APIs
+│   ├── auth/                        # Authentication pages
+│   ├── dashboard/                   # Main dashboard
+│   └── globals.css                  # Global styles
+├── 🧩 components/                   # React components
+│   ├── auth/                        # Authentication components
+│   ├── applications/                # Application management components
+│   ├── dashboard/                   # Dashboard components
+│   ├── universities/                # University-related components
+│   └── requirements/                # Requirements tracking components
 ├── 🔧 contexts/                     # React Context
-│   └── AuthContext.tsx              # 认证状态管理
-├── 📚 lib/                          # 工具函数和配置
-│   ├── supabase.ts                  # Supabase 客户端
-│   ├── database.types.ts            # 数据库类型定义
-│   └── permissions.ts               # 权限检查工具
-├── 📊 docs/                         # 文档
-│   └── api-documentation.md         # API 文档
-└── 📋 配置文件
-    ├── package.json                 # 项目依赖
-    ├── next.config.ts               # Next.js 配置
-    ├── tailwind.config.js           # Tailwind 配置
-    └── tsconfig.json                # TypeScript 配置
+│   └── AuthContext.tsx              # Authentication state management
+├── 📚 lib/                          # Utility functions and configuration
+│   ├── supabase.ts                  # Supabase client
+│   ├── database.types.ts            # Database type definitions
+│   └── permissions.ts               # Permission checking utilities
+├── 📊 docs/                         # Documentation
+│   └── api-documentation.md         # API documentation
+└── 📋 Configuration files
+    ├── package.json                 # Project dependencies
+    ├── next.config.ts               # Next.js configuration
+    ├── tailwind.config.js           # Tailwind configuration
+    └── tsconfig.json                # TypeScript configuration
 ```
 
-## 🔧 可用脚本
+## 🔧 Available Scripts
 
 ```bash
-# 开发模式 (使用 Turbopack 加速)
+# Development mode (with Turbopack acceleration)
 npm run dev
 
-# 类型检查
+# Type checking
 npm run type-check
 
-# 代码检查
+# Code linting
 npm run lint-check
 
-# 构建生产版本
+# Build production version
 npm run build
 
-# 启动生产服务器
+# Start production server
 npm start
 
-# 构建检查
+# Build check
 npm run check-build
 ```
 
-## 🎯 核心业务流程
+## 🎯 Core Business Processes
 
-### 申请状态工作流
+### Application Status Workflow
 ```
-未开始 → 进行中 → 已提交 → 审核中 → 决定
-                                     ├── 录取
-                                     ├── 拒绝
-                                     └── 候补
+Not Started → In Progress → Submitted → Under Review → Decision
+                                                        ├── Accepted
+                                                        ├── Rejected
+                                                        └── Waitlisted
 ```
 
-### 申请类型支持
-- **提前决定 (ED)**: 具有约束力的早期申请
-- **提前行动 (EA)**: 非约束性早期申请  
-- **常规决定 (RD)**: 标准申请周期
-- **滚动录取**: 持续接受申请
+### Application Type Support
+- **Early Decision (ED)**: Binding early application
+- **Early Action (EA)**: Non-binding early application
+- **Regular Decision (RD)**: Standard application cycle
+- **Rolling Admission**: Continuously accepting applications
 
-### 要求类型管理
-- 📝 申请文书
-- 📊 成绩单
-- 💼 推荐信
-- 🎨 作品集
-- 📄 标化成绩
-- 💰 财务证明
+### Requirement Type Management
+- 📝 Application Essays
+- 📊 Transcripts
+- 💼 Recommendation Letters
+- 🎨 Portfolio
+- 📄 Standardized Test Scores
+- 💰 Financial Documentation
 
-## 🌐 部署指南
+## 🌐 Deployment Guide
 
-### Vercel 部署 (推荐)
+### Vercel Deployment (Recommended)
 
-1. **连接 GitHub**: 将项目推送到 GitHub
-2. **导入到 Vercel**: 在 Vercel Dashboard 导入项目
-3. **配置环境变量**: 添加所有必需的环境变量
-4. **自动部署**: 每次 push 自动触发部署
+1. **Connect GitHub**: Push the project to GitHub
+2. **Import to Vercel**: Import project in Vercel Dashboard
+3. **Configure Environment Variables**: Add all required environment variables
+4. **Automatic Deployment**: Automatic deployment triggered on every push
 
-### 环境变量配置
+### Environment Variable Configuration
 
-生产环境需要设置以下变量：
+Production environment requires setting the following variables:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
